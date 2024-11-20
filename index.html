@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encontre o Tesouro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .container {
+            position: relative;
+            width: 300px;
+            height: 150px;
+            margin: 50px auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .hidden-message {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #000;
+            z-index: 1;
+            background-color: #eee;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Encontre o tesouro da minha vida</h1>
+    <div class="container">
+        <div class="hidden-message">Bárbara</div>
+        <canvas id="scratchCanvas"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("scratchCanvas");
+        const ctx = canvas.getContext("2d");
+
+        const container = document.querySelector(".container");
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight;
+
+        // Preencha o canvas com a cor amarela
+        ctx.fillStyle = "#ffeb3b";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Variáveis de controle
+        let isDrawing = false;
+
+        // Função para começar a desenhar
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e);
+        }
+
+        // Função para parar de desenhar
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+
+        // Função para desenhar
+        function draw(e) {
+            if (!isDrawing) return;
+
+            ctx.globalCompositeOperation = "destination-out";
+            ctx.lineWidth = 30; // Tamanho do "pincel"
+            ctx.lineCap = "round";
+
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        // Adicionar eventos para mouse
+        canvas.addEventListener("mousedown", startDrawing);
+        canvas.addEventListener("mouseup", stopDrawing);
+        canvas.addEventListener("mousemove", draw);
+
+        // Adicionar eventos para toque
+        canvas.addEventListener("touchstart", startDrawing);
+        canvas.addEventListener("touchend", stopDrawing);
+        canvas.addEventListener("touchmove", draw);
+    </script>
+</body>
+</html>
